@@ -9,13 +9,12 @@ import { JwtGuard } from 'src/guard';
 @Controller('users')
 export class UserController {
   @Get('me')
-  getMe(@GetUser() user: User) {
-    console.log(user);
+  getMe(@GetUser() user: User) //@GetUser('email') email: string 
+  {
     return user;
   }
 
   @Patch()
   editUser() {
-
   }
 }
