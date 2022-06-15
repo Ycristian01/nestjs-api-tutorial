@@ -1,9 +1,7 @@
 import { Controller, Get, Patch, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
-import { Request } from 'express';
-import { GetUser } from 'src/auth/decorator';
-import { JwtGuard } from 'src/guard';
+import { GetUser } from '../auth/decorator';
+import { JwtGuard } from '../guard';
 
 @UseGuards(JwtGuard) //all routes on controller have token validation
 @Controller('users')
