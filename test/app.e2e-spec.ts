@@ -5,6 +5,7 @@ import * as pactum from 'pactum';
 import { ValidationPipe } from '@nestjs/common';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { AuthDto } from 'src/auth/dto';
+import { EditUserDto } from 'src/user/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -70,6 +71,16 @@ describe('App e2e', () => {
     });
 
     describe('Signin', () => {
+      it('should throw if email empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody({
+            password: dto.password,
+          })
+          .expectStatus(400);
+      });
+
       it('should throw if password incorrect', () => {
         return pactum
         .spec()
@@ -79,6 +90,13 @@ describe('App e2e', () => {
           password: 'incorrect_pswd',
         })
         .expectStatus(403);
+      });
+
+      it('should throw if no body provided', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .expectStatus(400);
       });
 
       it('should signin', () => {
@@ -94,18 +112,36 @@ describe('App e2e', () => {
 
   describe('User', () => {
     describe('Get me', () => {
-      it('get current user profile', () => {
+      it('should get current user profile', () => {
         return pactum
           .spec()
           .get('/users/me',)
           .withHeaders({
             Authorization: 'Bearer $S{userAt}',
           })
-          .expectStatus(200).inspect();
+          .expectStatus(200);
       });
     });
 
     describe('Edit user', () => {
+      it('should edit current user', () => {
+        const dto: EditUserDto = {
+          firstName: "Big",
+          lastName: "Boss",
+          email: "naked_snake@email.com"
+        }
+
+        return pactum
+          .spec()
+          .patch('/users',)
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.firstName)
+          .expectBodyContains(dto.lastName);
+      });
     });
   });
 
